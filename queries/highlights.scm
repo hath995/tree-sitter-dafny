@@ -43,6 +43,9 @@
 
 (array_type) @type.builtin
 
+(named_type (qualified_name (identifier) @type))
+(type_parameter (identifier) @type)
+
 ; ── Declaration names ─────────────────────────────────────────
 
 (method_decl name: (identifier) @function)
