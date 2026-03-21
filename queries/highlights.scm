@@ -5,15 +5,6 @@
 (line_comment) @comment
 (block_comment) @comment
 
-; ── Literals ──────────────────────────────────────────────────
-
-(integer_literal) @number
-(real_literal) @number.float
-(boolean_literal) @boolean
-(null_literal) @constant.builtin
-(char_literal) @character
-(string_literal) @string
-
 ; ── Keywords ──────────────────────────────────────────────────
 
 [
@@ -30,6 +21,15 @@
   "forall" "exists" "calc"
   "new" "as" "is" "in" "old" "fresh" "unchanged" "print"
 ] @keyword
+
+; ── Operators ─────────────────────────────────────────────────
+
+(rel_op) @operator
+
+; ── Punctuation ───────────────────────────────────────────────
+
+["(" ")" "[" "]" "{" "}"] @punctuation.bracket
+["," ";" ":" "."] @punctuation.delimiter
 
 ; ── Types ─────────────────────────────────────────────────────
 
@@ -70,14 +70,14 @@
 (quantifier_var (identifier) @variable.parameter)
 (this_expression) @variable.builtin
 
-; ── Operators ─────────────────────────────────────────────────
+; ── Literals (after keywords so they take precedence) ─────────
 
-(rel_op) @operator
-
-; ── Punctuation ───────────────────────────────────────────────
-
-["(" ")" "[" "]" "{" "}"] @punctuation.bracket
-["," ";" ":" "."] @punctuation.delimiter
+(integer_literal) @number
+(real_literal) @number.float
+(boolean_literal) @constant.builtin
+(null_literal) @constant.builtin
+(char_literal) @character
+(string_literal) @string
 
 ; ── Attributes ────────────────────────────────────────────────
 
