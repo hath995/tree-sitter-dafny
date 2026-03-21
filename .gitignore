@@ -6,15 +6,6 @@ build/
 *.exp
 package-lock.json
 
-# Generated parser (regenerate with `npm run generate`)
-src/parser.c
-src/grammar.json
-src/node-types.json
-src/tree_sitter/
-
-# Keep the hand-written scanner
-!src/scanner.c
-
 # Backup grammar files
 grammar.js.*
 grammar-*.js

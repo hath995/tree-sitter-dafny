@@ -43,15 +43,15 @@ Then run `:TSInstall dafny`.
 
 ### Helix
 
-Add to `languages.toml`:
+1. Add to `~/.config/helix/languages.toml` (Linux/macOS) or `%AppData%\helix\languages.toml` (Windows):
 
 ```toml
 [[language]]
 name = "dafny"
 scope = "source.dafny"
 file-types = ["dfy"]
-roots = []
 comment-token = "//"
+indent = { tab-width = 2, unit = "  " }
 
 [language.auto-pairs]
 '(' = ')'
@@ -62,6 +62,27 @@ comment-token = "//"
 [[grammar]]
 name = "dafny"
 source = { git = "https://github.com/hath995/tree-sitter-dafny", rev = "main" }
+```
+
+For local development, use `source = { path = "/path/to/tree-sitter-dafny" }` instead.
+
+2. Fetch and build the grammar:
+
+```bash
+hx --grammar fetch
+hx --grammar build
+```
+
+3. Copy the query files into Helix's runtime directory:
+
+```bash
+# Linux/macOS
+mkdir -p ~/.config/helix/runtime/queries/dafny
+cp /path/to/tree-sitter-dafny/queries/*.scm ~/.config/helix/runtime/queries/dafny/
+
+# Windows (PowerShell)
+mkdir -Force "$env:APPDATA\helix\runtime\queries\dafny"
+cp tree-sitter-dafny\queries\*.scm "$env:APPDATA\helix\runtime\queries\dafny\"
 ```
 
 ### Emacs (treesit)
