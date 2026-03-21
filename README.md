@@ -73,87 +73,138 @@ hx --grammar fetch
 hx --grammar build
 ```
 
-3. Install the highlight queries into Helix's runtime directory:
+3. Install the query files into Helix's runtime directory:
 
 ```bash
 # Linux/macOS
 mkdir -p ~/.config/helix/runtime/queries/dafny
-curl -o ~/.config/helix/runtime/queries/dafny/highlights.scm \
-  https://raw.githubusercontent.com/hath995/tree-sitter-dafny/main/queries/highlights.scm
+for f in highlights locals tags; do
+  curl -o ~/.config/helix/runtime/queries/dafny/$f.scm \
+    https://raw.githubusercontent.com/hath995/tree-sitter-dafny/main/queries/$f.scm
+done
 
 # Windows (PowerShell)
 mkdir -Force "$env:APPDATA\helix\runtime\queries\dafny"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/hath995/tree-sitter-dafny/main/queries/highlights.scm" `
-  -OutFile "$env:APPDATA\helix\runtime\queries\dafny\highlights.scm"
+foreach ($f in "highlights","locals","tags") {
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/hath995/tree-sitter-dafny/main/queries/$f.scm" `
+    -OutFile "$env:APPDATA\helix\runtime\queries\dafny\$f.scm"
+}
 ```
 
 4. Restart Helix. Opening a `.dfy` file should show syntax highlighting and "dafny" in the status bar.
 
 ### Emacs (treesit)
 
-Emacs 29+ has built-in tree-sitter support via `treesit`. Add to your config:
+Emacs 29+ has built-in tree-sitter support via `treesit`. Add to your init file:
 
 ```elisp
 (require 'treesit)
 
+;; Register the grammar source
 (add-to-list 'treesit-language-source-alist
              '(dafny "https://github.com/hath995/tree-sitter-dafny"))
 
-;; Install the grammar (run once)
-;; M-x treesit-install-language-grammar RET dafny RET
+;; Install the grammar (run once):
+;;   M-x treesit-install-language-grammar RET dafny RET
+
+;; Associate .dfy files
+(add-to-list 'auto-mode-alist '("\\.dfy\\'" . dafny-ts-mode))
 
 (define-derived-mode dafny-ts-mode prog-mode "Dafny"
   "Major mode for Dafny files using tree-sitter."
   (when (treesit-ready-p 'dafny)
     (treesit-parser-create 'dafny)
+    (setq-local comment-start "// ")
+    (setq-local treesit-font-lock-feature-list
+                '((comment keyword string type number operator)))
     (setq-local treesit-font-lock-settings
                 (treesit-font-lock-rules
-                 :language 'dafny
-                 :feature 'comment
+                 :language 'dafny :feature 'comment
                  '((line_comment) @font-lock-comment-face
                    (block_comment) @font-lock-comment-face)
-                 :language 'dafny
-                 :feature 'keyword
-                 '(["module" "import" "export" "class" "trait" "datatype"
-                    "newtype" "type" "method" "lemma" "function" "predicate"
-                    "ghost" "var" "const" "if" "then" "else" "while" "for"
-                    "match" "case" "return" "requires" "ensures" "modifies"
-                    "reads" "decreases" "invariant" "assert" "assume"
-                    "forall" "exists" "new" "as" "is" "in" "old"
+                 :language 'dafny :feature 'keyword
+                 '(["module" "import" "export" "class" "trait" "datatype" "codatatype"
+                    "newtype" "type" "iterator" "method" "lemma" "constructor"
+                    "function" "predicate" "ghost" "static" "opaque" "twostate"
+                    "least" "greatest" "abstract" "extends" "refines" "provides"
+                    "reveals" "opened" "const" "var"
+                    "if" "then" "else" "while" "for" "match" "case"
+                    "return" "yield" "break" "continue" "label"
+                    "requires" "ensures" "modifies" "reads" "decreases"
+                    "invariant" "witness" "by"
+                    "assert" "assume" "expect" "reveal" "hide"
+                    "forall" "exists" "calc"
+                    "new" "as" "is" "in" "old" "fresh" "unchanged" "print"
+                    "to" "downto"
                     ] @font-lock-keyword-face)
-                 :language 'dafny
-                 :feature 'string
+                 :language 'dafny :feature 'string
                  '((string_literal) @font-lock-string-face
                    (char_literal) @font-lock-string-face)
-                 :language 'dafny
-                 :feature 'number
+                 :language 'dafny :feature 'type
+                 '([(int_type) (nat_type) (real_type) (bool_type) (char_type)
+                    (string_type) (object_type) (bitvector_type) (float_type)
+                    (ordinal_type)] @font-lock-type-face
+                   ["set" "iset" "multiset" "seq" "map" "imap"] @font-lock-type-face
+                   (array_type) @font-lock-type-face
+                   (named_type (qualified_name (identifier) @font-lock-type-face))
+                   (class_decl name: (identifier) @font-lock-type-face)
+                   (trait_decl name: (identifier) @font-lock-type-face)
+                   (datatype_decl name: (identifier) @font-lock-type-face)
+                   (newtype_decl name: (identifier) @font-lock-type-face)
+                   (method_decl name: (identifier) @font-lock-function-name-face)
+                   (function_decl name: (identifier) @font-lock-function-name-face))
+                 :language 'dafny :feature 'number
                  '((integer_literal) @font-lock-number-face
-                   (real_literal) @font-lock-number-face)))
-    (setq-local treesit-font-lock-feature-list
-                '((comment) (keyword string) (number)))))
-
-(add-to-list 'auto-mode-alist '("\\.dfy\\'" . dafny-ts-mode))
+                   (real_literal) @font-lock-number-face
+                   (boolean_literal) @font-lock-constant-face
+                   (null_literal) @font-lock-constant-face)
+                 :language 'dafny :feature 'operator
+                 '((rel_op) @font-lock-operator-face
+                   [":=" ":|" ":-" "+" "-" "*" "/" "%" "!" "~"
+                    "==" "!=" "!!" "!in" ".." "::" "=>"
+                    "->" "~>" "-->" "returns" "yields"
+                    ] @font-lock-operator-face)))))
 ```
 
 ### Zed
 
-Add to your `settings.json`:
+Zed requires a language extension. Create an extension directory with this structure:
 
-```json
-{
-  "languages": {
-    "Dafny": {
-      "language_servers": []
-    }
-  },
-  "lsp": {},
-  "file_types": {
-    "Dafny": ["dfy"]
-  }
-}
+```
+dafny/
+  extension.toml
+  languages/dafny/
+    config.toml
+    highlights.scm
 ```
 
-Then install the grammar by adding a Zed extension or pointing to this repository in your Zed tree-sitter configuration.
+`extension.toml`:
+```toml
+[extension]
+id = "dafny"
+name = "Dafny"
+version = "0.1.0"
+
+[grammars.dafny]
+repository = "https://github.com/hath995/tree-sitter-dafny"
+commit = "main"
+```
+
+`languages/dafny/config.toml`:
+```toml
+name = "Dafny"
+grammar = "dafny"
+path_suffixes = ["dfy"]
+line_comments = ["// "]
+block_comment = ["/* ", " */"]
+brackets = [
+  { start = "{", end = "}", close = true, newline = true },
+  { start = "(", end = ")", close = true, newline = false },
+  { start = "[", end = "]", close = true, newline = false },
+]
+```
+
+Copy `queries/highlights.scm` from this repository into `languages/dafny/highlights.scm`, then install the extension as a [Zed dev extension](https://zed.dev/docs/extensions/developing-extensions).
 
 ### From source
 
