@@ -1,0 +1,51 @@
+{
+  "name": "tree-sitter-dafny",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for Dafny",
+  "main": "bindings/node",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hath995/tree-sitter-dafny"
+  },
+  "license": "MIT",
+  "keywords": [
+    "tree-sitter",
+    "parser",
+    "dafny",
+    "verification",
+    "formal-methods"
+  ],
+  "files": [
+    "grammar.js",
+    "tree-sitter.json",
+    "queries/*",
+    "src/parser.c",
+    "src/scanner.c",
+    "src/tree_sitter/*",
+    "src/node-types.json",
+    "src/grammar.json",
+    "bindings/*",
+    "binding.gyp"
+  ],
+  "dependencies": {
+    "nan": "^2.18.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.24.0"
+  },
+  "scripts": {
+    "generate": "tree-sitter generate",
+    "parse": "tree-sitter parse",
+    "test": "tree-sitter test",
+    "test:100": "node test/parse-suite.js --count 100 --exclude-errors",
+    "test:all": "node test/parse-suite.js --count 99999 --exclude-errors",
+    "test:stdlib": "node test/parse-suite.js --dir ../dafny/Source/DafnyStandardLibraries --count 99999"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.dafny",
+      "file-types": ["dfy"],
+      "highlights": "queries/highlights.scm"
+    }
+  ]
+}
