@@ -73,17 +73,21 @@ hx --grammar fetch
 hx --grammar build
 ```
 
-3. Copy the query files into Helix's runtime directory:
+3. Install the highlight queries into Helix's runtime directory:
 
 ```bash
 # Linux/macOS
 mkdir -p ~/.config/helix/runtime/queries/dafny
-cp /path/to/tree-sitter-dafny/queries/*.scm ~/.config/helix/runtime/queries/dafny/
+curl -o ~/.config/helix/runtime/queries/dafny/highlights.scm \
+  https://raw.githubusercontent.com/hath995/tree-sitter-dafny/main/queries/highlights.scm
 
 # Windows (PowerShell)
 mkdir -Force "$env:APPDATA\helix\runtime\queries\dafny"
-cp tree-sitter-dafny\queries\*.scm "$env:APPDATA\helix\runtime\queries\dafny\"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/hath995/tree-sitter-dafny/main/queries/highlights.scm" `
+  -OutFile "$env:APPDATA\helix\runtime\queries\dafny\highlights.scm"
 ```
+
+4. Restart Helix. Opening a `.dfy` file should show syntax highlighting and "dafny" in the status bar.
 
 ### Emacs (treesit)
 
