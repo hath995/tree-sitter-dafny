@@ -96,3 +96,4 @@
 ; ── Attributes ────────────────────────────────────────────────
 
 (attribute) @attribute
+(attribute "}" @attribute)
