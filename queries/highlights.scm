@@ -20,6 +20,7 @@
   "assert" "assume" "expect" "reveal" "hide"
   "forall" "exists" "calc"
   "new" "as" "is" "in" "old" "fresh" "unchanged" "print"
+  "to" "downto"
 ] @keyword
 
 ; ── Operators ─────────────────────────────────────────────────
