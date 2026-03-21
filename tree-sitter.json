@@ -8,7 +8,9 @@
       "file-types": [
         "dfy"
       ],
-      "highlights": "queries/highlights.scm"
+      "highlights": "queries/highlights.scm",
+      "locals": "queries/locals.scm",
+      "tags": "queries/tags.scm"
     }
   ],
   "metadata": {
@@ -16,7 +18,7 @@
     "license": "MIT",
     "description": "Tree-sitter grammar for Dafny",
     "links": {
-      "repository": "https://github.com/tree-sitter/tree-sitter-dafny"
+      "repository": "https://github.com/hath995/tree-sitter-dafny"
     }
   },
   "bindings": {
