@@ -10,7 +10,9 @@
       ],
       "highlights": "queries/highlights.scm",
       "locals": "queries/locals.scm",
-      "tags": "queries/tags.scm"
+      "tags": "queries/tags.scm",
+      "indents": "queries/indents.scm",
+      "textobjects": "queries/textobjects.scm"
     }
   ],
   "metadata": {
