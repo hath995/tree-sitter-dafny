@@ -32,8 +32,10 @@
 
 (newtype_decl) @class.around
 
-(module_definition) @class.around
-(module_definition (module_body) @class.inside)
+; ── Modules ───────────────────────────────────────────────────
+
+(module_definition) @module.around
+(module_definition (module_body) @module.inside)
 
 ; ── Parameters ────────────────────────────────────────────────
 ; `aa` = around argument/parameter, `ia` = inside argument
