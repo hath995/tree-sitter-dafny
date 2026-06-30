@@ -6,6 +6,14 @@ build/
 *.exp
 package-lock.json
 
+# Rust build output
+/target/
+
+# Python build artifacts
+__pycache__/
+*.pyd
+*.egg-info/
+
 # Backup grammar files
 grammar.js.*
 grammar-*.js
